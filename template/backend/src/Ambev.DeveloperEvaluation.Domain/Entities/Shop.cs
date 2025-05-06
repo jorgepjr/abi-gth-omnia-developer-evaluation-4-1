@@ -1,7 +1,8 @@
+using Ambev.DeveloperEvaluation.Domain.Common;
+
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
-public class Shop
+public class Shop : BaseEntity
 {
-    public int Id { get; set; }
     public string TradeName { get; set; } = string.Empty;
 }
