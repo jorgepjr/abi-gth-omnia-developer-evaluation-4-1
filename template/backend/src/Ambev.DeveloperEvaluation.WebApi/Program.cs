@@ -78,7 +78,7 @@ public class Program
                 app.UseSwagger();
                 app.UseSwaggerUI(x =>
                 {
-                    x.SwaggerEndpoint("/swagger/app/swagger.json", "App API");
+                    x.SwaggerEndpoint("/swagger/app/swagger.json", "Store API");
                     x.SwaggerEndpoint("/swagger/users/swagger.json","Users API");
                 });
             }
