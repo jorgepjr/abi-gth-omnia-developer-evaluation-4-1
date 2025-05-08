@@ -46,7 +46,21 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreateOrde
         
         var createOrder = await _orderRepository.CreateAsync(order, cancellationToken);
         
-        var result = _mapper.Map<CreateOrderResult>(createOrder);
+        
+        var result = new CreateOrderResult
+        {
+            OrderId = createOrder.Id,
+            CustomerId = order.CustomerId, 
+            ShopId = order.ShopId,
+            OrderItems = order.OrderItems.Select(x => new CreateOrderItemResult
+            {
+                ProductId = x.ProductId,
+                Quantity = x.Quantity,
+                UnitPrice = x.UnitPrice,
+            }),
+            Total = order.Total,
+        };
+        
         return result;
     }
 }

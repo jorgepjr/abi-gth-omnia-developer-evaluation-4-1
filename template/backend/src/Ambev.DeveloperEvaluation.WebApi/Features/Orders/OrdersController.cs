@@ -31,7 +31,19 @@ public class OrdersController : BaseController
         {
             Success = true,
             Message = "Order created successfully",
-            Data = _mapper.Map<CreateOrderResponse>(response),
+            Data = new CreateOrderResponse
+            {
+                OrderId = response.OrderId,
+                ShopId = response.ShopId,
+                CustomerId = response.CustomerId,
+                OrderItems = response.OrderItems.Select(x=> new OrderItemsResponse
+                {
+                    UnitPrice = x.UnitPrice,
+                    ProductId = x.ProductId,
+                    Quantity = x.Quantity,
+                }),
+                TotalPrice = response.Total,
+            },
         }); 
     }
 }
