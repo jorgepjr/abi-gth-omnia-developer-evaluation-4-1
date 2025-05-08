@@ -12,6 +12,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Auth;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
+[ApiExplorerSettings(GroupName = "users")]
 public class AuthController : BaseController
 {
     private readonly IMediator _mediator;

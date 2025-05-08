@@ -8,6 +8,7 @@ using Ambev.DeveloperEvaluation.ORM;
 using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 namespace Ambev.DeveloperEvaluation.WebApi;
@@ -27,7 +28,26 @@ public class Program
             builder.Services.AddEndpointsApiExplorer();
 
             builder.AddBasicHealthChecks();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(x =>
+            {
+                x.SwaggerDoc("app", new OpenApiInfo
+                {
+                    Title = "Store API",
+                    Version = "v1",
+                    Description = "API to manage order registration and apply discounts based on the quantity of items in the order"
+                });
+                
+                x.SwaggerDoc("users", new OpenApiInfo
+                {
+                  Title  = "Users",
+                  Version = "v1",
+                });
+                
+                x.DocInclusionPredicate((documentName, apiDescription) =>
+                {
+                    return apiDescription.GroupName.Equals(documentName);
+                });
+            });
 
             builder.Services.AddDbContext<DefaultContext>(options =>
                 options.UseNpgsql(
@@ -58,7 +78,11 @@ public class Program
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(x =>
+                {
+                    x.SwaggerEndpoint("/swagger/app/swagger.json", "App API");
+                    x.SwaggerEndpoint("/swagger/users/swagger.json","Users API");
+                });
             }
 
             app.UseHttpsRedirection();
