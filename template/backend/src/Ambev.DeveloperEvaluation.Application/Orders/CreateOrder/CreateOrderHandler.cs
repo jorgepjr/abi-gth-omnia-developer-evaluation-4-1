@@ -23,14 +23,25 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreateOrde
 
     public async Task<CreateOrderResult> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
     {
-        var order = _mapper.Map<Order>(command);
-        
-        foreach (var items in command.OrderItems)
+        var order = new Order
         {
-            var product = await _productRepository.GetById(items.ProductId);
+            CustomerId = command.CustomerId,
+            ShopId = command.ShopId
+        };
+        
+        foreach (var item in command.OrderItems)
+        {
+            var product = await _productRepository.GetById(item.ProductId);
             
             if (product is null) throw new ArgumentNullException();
-            order.AddOrderItem(new OrderItem{OrderId = order.Id, ProductId = product.Id, UnitPrice = product.Price});
+            
+            order.AddOrderItem(new OrderItem
+            {
+                OrderId = order.Id,
+                ProductId = product.Id,
+                UnitPrice = product.Price,
+                Quantity = item.Quantity,
+            });
         }
         
         var createOrder = await _orderRepository.CreateAsync(order, cancellationToken);
