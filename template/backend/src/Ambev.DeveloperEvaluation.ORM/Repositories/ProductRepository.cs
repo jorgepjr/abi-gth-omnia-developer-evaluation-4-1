@@ -1,5 +1,6 @@
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories;
 
@@ -17,5 +18,10 @@ public class ProductRepository : IProductRepository
         await _context.Products.AddAsync(product, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         return product;
+    }
+
+    public async Task<Product> GetById(Guid productId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Products.FirstOrDefaultAsync(x => x.Id == productId, cancellationToken);
     }
 }
