@@ -43,10 +43,8 @@ public class Program
                   Version = "v1",
                 });
                 
-                x.DocInclusionPredicate((documentName, apiDescription) =>
-                {
-                    return apiDescription.GroupName.Equals(documentName);
-                });
+                x.DocInclusionPredicate((documentName, apiDescription) => 
+                    apiDescription.GroupName!.Equals(documentName));
             });
 
             builder.Services.AddDbContext<DefaultContext>(options =>

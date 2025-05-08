@@ -33,6 +33,5 @@ public class CustomersController : BaseController
             Message = "Customer created successfully",
             Data = _mapper.Map<CreateCustomerResponse>(response),
         }); 
-        return Ok();
     }
 }
