@@ -17,7 +17,10 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasColumnType("MONEY")
             .HasColumnType("decimal(18, 2)");
         
-        builder.Property(x => x.CreateAt).IsRequired();
+        builder.Property(x => x.CreateAt)
+            .IsRequired()
+            .HasColumnType("timestamp without time zone");
+        
         builder.Property(x => x.Cancelled).IsRequired();
     }
 }
