@@ -9,7 +9,6 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreateOrde
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
-    private readonly IMapper _mapper;
 
     public CreateOrderHandler(
         IOrderRepository orderRepository,
@@ -17,7 +16,6 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreateOrde
         IProductRepository productRepository)
     {
         _orderRepository = orderRepository;
-        _mapper = mapper;
         _productRepository = productRepository;
     }
 
@@ -29,23 +27,24 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreateOrde
             ShopId = command.ShopId
         };
         
-        foreach (var item in command.OrderItems)
+        foreach (var orderItem in command.OrderItems)
         {
-            var product = await _productRepository.GetById(item.ProductId);
+            var product = await _productRepository.GetById(orderItem.ProductId);
             
             if (product is null) throw new ArgumentNullException();
-            
-            order.AddOrderItem(new OrderItem
+
+            var newOrderItem = new OrderItem
             {
                 OrderId = order.Id,
-                ProductId = product.Id,
-                UnitPrice = product.Price,
-                Quantity = item.Quantity,
-            });
+                ProductId = orderItem.ProductId,
+                UnitPrice = orderItem.UnitPrice,
+                Quantity = orderItem.Quantity,
+            };
+            
+            order.AddOrderItem(newOrderItem);
         }
         
         var createOrder = await _orderRepository.CreateAsync(order, cancellationToken);
-        
         
         var result = new CreateOrderResult
         {
