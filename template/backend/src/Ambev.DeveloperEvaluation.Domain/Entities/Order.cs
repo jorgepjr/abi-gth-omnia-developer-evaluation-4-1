@@ -23,6 +23,28 @@ public class Order : BaseEntity
     public void AddOrderItem(OrderItem orderItem)
     {
         OrderItems.Add(orderItem);
-        Total += orderItem.UnitPrice;
+        SetDiscount();
+    }
+    
+    private void SetDiscount()
+    {
+        decimal discountForItem = 0.0m;
+        
+        foreach (var item in OrderItems)
+        {
+            if (item.Quantity > 4)
+            {
+                discountForItem = item.UnitPrice * 0.10m;
+            }
+            
+            if (item.Quantity >= 10 && item.Quantity <= 20)
+            {
+                discountForItem = item.UnitPrice * 0.20m;
+            }
+            
+            item.UnitPrice -= discountForItem;
+        }
+        
+        Total = OrderItems.Sum(x => x.UnitPrice * x.Quantity);
     }
 }
