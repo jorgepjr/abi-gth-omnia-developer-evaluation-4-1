@@ -1,7 +1,10 @@
+using Ambev.DeveloperEvaluation.Application.Validator;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
+using FluentValidation.Results;
 using MediatR;
+using ValidationException = FluentValidation.ValidationException;
 
 namespace Ambev.DeveloperEvaluation.Application.Orders.CreateOrder;
 
@@ -29,9 +32,12 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreateOrde
         
         foreach (var orderItem in command.OrderItems)
         {
-            var product = await _productRepository.GetById(orderItem.ProductId);
+            var validationResult = await ValidateOrderItems(cancellationToken, orderItem);
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
             
-            if (product is null) throw new ArgumentNullException();
+            var product = await _productRepository.GetById(orderItem.ProductId);
+            if (product is null) throw new ArgumentNullException($"Product with ID '{orderItem.ProductId}' not found");
 
             var newOrderItem = new OrderItem
             {
@@ -61,5 +67,12 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreateOrde
         };
         
         return result;
+    }
+
+    private static async Task<ValidationResult> ValidateOrderItems(CancellationToken cancellationToken, CreateOrderItemCommand orderItem)
+    {
+        var validator = new OrderItemValidator();
+        var validationResult = await validator.ValidateAsync(orderItem, cancellationToken);
+        return validationResult;
     }
 }
