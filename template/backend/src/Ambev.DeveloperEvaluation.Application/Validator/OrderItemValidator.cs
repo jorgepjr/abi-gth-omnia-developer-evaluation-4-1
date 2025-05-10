@@ -9,7 +9,7 @@ public class OrderItemValidator : AbstractValidator<CreateOrderItemCommand>
     {
         RuleFor(orderItem => orderItem.Quantity)
             .LessThanOrEqualTo(20).WithMessage("can't add more than 20 units of the same item");
-        
+
         RuleFor(orderItem => orderItem.Quantity)
             .GreaterThan(0).WithMessage("Invalid quantity. Enter value greater than zero");
     }
