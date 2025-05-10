@@ -1,8 +1,6 @@
-using Ambev.DeveloperEvaluation.Application.Validator;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
-using FluentValidation.Results;
 using MediatR;
 using ValidationException = FluentValidation.ValidationException;
 
@@ -12,7 +10,6 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreateOrde
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
-
     public CreateOrderHandler(
         IOrderRepository orderRepository,
         IMapper mapper,
@@ -24,6 +21,11 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreateOrde
 
     public async Task<CreateOrderResult> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
     {
+        var validateOrder = command.ValidateOrder();
+        
+        if (!validateOrder.IsValid)
+            throw new ValidationException(validateOrder.Errors);
+        
         var order = new Order
         {
             CustomerId = command.CustomerId,
@@ -32,19 +34,19 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreateOrde
         
         foreach (var orderItem in command.OrderItems)
         {
-            var validationResult = await ValidateOrderItems(cancellationToken, orderItem);
-            if (!validationResult.IsValid)
-                throw new ValidationException(validationResult.Errors);
+            var validateOrderItems = orderItem.ValidateOrderItems();
+            if (!validateOrderItems.IsValid)
+                throw new ValidationException(validateOrderItems.Errors);
             
-            var product = await _productRepository.GetById(orderItem.ProductId);
+            var product = await _productRepository.GetById(orderItem.ProductId, cancellationToken);
             if (product is null) throw new ArgumentNullException($"Product with ID '{orderItem.ProductId}' not found");
-
+            
             var newOrderItem = new OrderItem
             {
                 OrderId = order.Id,
-                ProductId = orderItem.ProductId,
-                UnitPrice = orderItem.UnitPrice,
                 Quantity = orderItem.Quantity,
+                ProductId = product.Id,
+                UnitPrice = product.Price,
             };
             
             order.AddOrderItem(newOrderItem);
@@ -67,12 +69,5 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreateOrde
         };
         
         return result;
-    }
-
-    private static async Task<ValidationResult> ValidateOrderItems(CancellationToken cancellationToken, CreateOrderItemCommand orderItem)
-    {
-        var validator = new OrderItemValidator();
-        var validationResult = await validator.ValidateAsync(orderItem, cancellationToken);
-        return validationResult;
     }
 }
