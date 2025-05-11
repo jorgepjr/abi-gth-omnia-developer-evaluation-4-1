@@ -1,6 +1,6 @@
-namespace Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
+namespace Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
 
-public class CreateProductResult
+public class UpdateProductResult
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;

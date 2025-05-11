@@ -37,7 +37,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreateOrde
             if (!validateOrderItems.IsValid)
                 throw new ValidationException(validateOrderItems.Errors);
             
-            var product = await _productRepository.GetById(orderItem.ProductId, cancellationToken);
+            var product = await _productRepository.GetByIdAsync(orderItem.ProductId, cancellationToken);
             if (product is null) throw new ArgumentNullException($"Product with ID '{orderItem.ProductId}' not found");
             
             var newOrderItem = new OrderItem
