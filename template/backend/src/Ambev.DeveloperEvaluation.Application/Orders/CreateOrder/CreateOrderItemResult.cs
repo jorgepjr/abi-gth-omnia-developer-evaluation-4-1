@@ -7,4 +7,5 @@ public class CreateOrderItemResult
     public decimal UnitPrice { get; set; }
     public decimal Discount { get; set; }
     public decimal FinalPrice { get; set; }
+    public bool Cancelled { get; set; }
 }

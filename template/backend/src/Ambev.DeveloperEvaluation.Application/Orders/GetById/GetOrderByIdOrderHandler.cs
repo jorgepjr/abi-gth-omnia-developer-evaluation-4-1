@@ -30,6 +30,7 @@ public class GetOrderByIdOrderHandler : IRequestHandler<GetOrderbyIdCommand, Get
                 UnitPrice = x.UnitPrice,
                 Discount = x.ItemWithDiscount,
                 FinalPrice = x.FinalPrice,
+                Cancelled = x.Cancelled,
             }),
             OrderNumber = order.Number,
             Total = order.Total,
