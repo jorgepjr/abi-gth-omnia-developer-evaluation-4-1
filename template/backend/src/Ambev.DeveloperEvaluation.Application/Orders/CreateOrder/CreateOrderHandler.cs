@@ -12,7 +12,6 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreateOrde
     private readonly IProductRepository _productRepository;
     public CreateOrderHandler(
         IOrderRepository orderRepository,
-        IMapper mapper,
         IProductRepository productRepository)
     {
         _orderRepository = orderRepository;
