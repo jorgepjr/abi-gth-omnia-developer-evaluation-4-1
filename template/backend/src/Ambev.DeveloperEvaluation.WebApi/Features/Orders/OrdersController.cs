@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Orders;
 
 [ApiController]
-[ApiExplorerSettings(GroupName = "app")]
+[ApiExplorerSettings(GroupName = "app"), Tags("4 - Orders")]
 [Route("api/[controller]")]
 public class OrdersController : BaseController
 {

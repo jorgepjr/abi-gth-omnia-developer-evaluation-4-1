@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Shops;
 
 [ApiController]
-[ApiExplorerSettings(GroupName = "app")]
+[ApiExplorerSettings(GroupName = "app"), Tags("2 - Shops")]
 [Route("api/[controller]")]
 public class ShopsController : BaseController
 {
