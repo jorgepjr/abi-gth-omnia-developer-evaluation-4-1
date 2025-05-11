@@ -29,7 +29,11 @@ public class GetOrderByIdOrderHandler : IRequestHandler<GetOrderbyIdCommand, Get
                 Quantity = x.Quantity,
                 UnitPrice = x.UnitPrice,
             }),
+            OrderNumber = order.Number,
             Total = order.Total,
+            Date = order.CreateAt,
+            Customer = order.Customer.Name,
+            Store = order.Shop.TradeName,
         };
         
         return result;
