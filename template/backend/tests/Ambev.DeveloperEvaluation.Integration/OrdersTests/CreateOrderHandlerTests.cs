@@ -61,7 +61,7 @@ public class CreateOrderHandlerTests : IClassFixture<InMemoryDataBase>
     public async Task MustApplyTenPercentDiscountOnOrdersAboveFourIdenticalItems()
     {
         //Arrange
-        var unitPriceProduct = new[] {10.6m};
+        var unitPriceProduct = new[] {10.0m};
         await CreateProducts(unitPriceProduct);
 
         var products = await _context.Products
@@ -78,11 +78,11 @@ public class CreateOrderHandlerTests : IClassFixture<InMemoryDataBase>
         {
             CustomerId = customer.Id,
             ShopId = shop.Id,
-            OrderItems = CreateAndGetOrderItemsCommand(products.Where(x=>x.Price == 10.6m).ToList(), [5]),
+            OrderItems = CreateAndGetOrderItemsCommand(products, [5]),
         }, CancellationToken.None);
         
         //Assert
-        Assert.Equal(47.70m, response.Total);
+        Assert.Equal(45.0m, response.Total);
     }
     
     [Fact(DisplayName = "Compras entre 10 e 20 itens idênticos têm 20% de desconto")]
@@ -95,7 +95,6 @@ public class CreateOrderHandlerTests : IClassFixture<InMemoryDataBase>
         var products = await _context.Products
             .Where(x => unitPriceProduct.Contains(x.Price))
             .ToListAsync();
-        
         var customer = await _customerRepository.CreateAsync(new Customer { Name = "Jorge" });
         var shop = await _shopRepository.CreateAsync(new Shop { TradeName = "Teste-shop" });
 
