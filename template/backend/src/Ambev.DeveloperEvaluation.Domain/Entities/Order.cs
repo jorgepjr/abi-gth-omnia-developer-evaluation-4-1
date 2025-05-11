@@ -26,26 +26,6 @@ public class Order : BaseEntity
             throw new DomainException("can't add more than 20 units of the same item.");
         
         OrderItems.Add(orderItem);
-        ApplyTotalValue(orderItem);
-    }
-    
-    private void ApplyTotalValue(OrderItem orderItem)
-    {
-        decimal discountForItem = 0.0m;
-        
-        if (orderItem.Quantity > 4 && orderItem.Quantity <= 9)
-        {
-            discountForItem = orderItem.UnitPrice * 0.10m;
-        }
-            
-        if (orderItem.Quantity >= 10 && orderItem.Quantity <= 20)
-        {
-            discountForItem = orderItem.UnitPrice * 0.20m;
-        }
-            
-        orderItem.UnitPrice -= discountForItem;
-        
-        var totalPriceWithDiscount = orderItem.UnitPrice * orderItem.Quantity;
-        Total += totalPriceWithDiscount;
+        Total += orderItem.FinalPrice;
     }
 }
