@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
+using Ambev.DeveloperEvaluation.Application.Products.GetAllProducts;
 using Ambev.DeveloperEvaluation.Application.Products.GetById;
 using Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Common;
@@ -57,6 +58,14 @@ public class ProductsController : BaseController
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(new GetProductByIdCommand{ProductId = id}, cancellationToken); 
+        return Ok(response);
+    }
+    
+    [HttpGet("/{pageNumber}/{pageSize}")]
+    public async Task<IActionResult> GetAll(int pageSize, int pageNumber, CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+            new GetAllProductsCommand{PageSize = pageSize, PageNumber = pageNumber}, cancellationToken); 
         return Ok(response);
     }
 }
