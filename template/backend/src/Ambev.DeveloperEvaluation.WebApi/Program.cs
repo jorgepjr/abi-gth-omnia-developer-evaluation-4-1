@@ -34,16 +34,17 @@ public class Program
                 {
                     Title = "Store API",
                     Version = "v1",
-                    Description = "API to manage order registration and apply discounts based on the quantity of items in the order"
+                    Description =
+                        "API to manage order registration and apply discounts based on the quantity of items in the order"
                 });
-                
+
                 x.SwaggerDoc("users", new OpenApiInfo
                 {
-                  Title  = "Users",
-                  Version = "v1",
+                    Title = "Users",
+                    Version = "v1",
                 });
-                
-                x.DocInclusionPredicate((documentName, apiDescription) => 
+
+                x.DocInclusionPredicate((documentName, apiDescription) =>
                     apiDescription.GroupName!.Equals(documentName));
             });
 
@@ -70,6 +71,15 @@ public class Program
 
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
+            var serviceProvider = builder.Services.BuildServiceProvider();
+            using (var serviceScope = serviceProvider.CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<DefaultContext>();
+                Task.Run(async () => await context.Database.MigrateAsync())
+                    .GetAwaiter()
+                    .GetResult();
+            }
+
             var app = builder.Build();
             app.UseMiddleware<ValidationExceptionMiddleware>();
 
@@ -79,7 +89,7 @@ public class Program
                 app.UseSwaggerUI(x =>
                 {
                     x.SwaggerEndpoint("/swagger/app/swagger.json", "Store API");
-                    x.SwaggerEndpoint("/swagger/users/swagger.json","Users API");
+                    x.SwaggerEndpoint("/swagger/users/swagger.json", "Users API");
                 });
             }
 
@@ -87,7 +97,6 @@ public class Program
 
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseBasicHealthChecks();
 
             app.MapControllers();
@@ -102,5 +111,7 @@ public class Program
         {
             Log.CloseAndFlush();
         }
+   
     }
+    
 }

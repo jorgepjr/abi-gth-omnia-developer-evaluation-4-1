@@ -21,7 +21,16 @@ public class OrderRepository : IOrderRepository
         await _context.SaveChangesAsync(cancellationToken);
         return order;
     }
-
+    
+    public async Task<Order?> GetByIdAsync(Guid orderId, CancellationToken cancellationToken = default)
+    {
+        var order = await _context.Orders
+            .Include(x=>x.OrderItems)
+            .FirstOrDefaultAsync(x=>x.Id == orderId, cancellationToken);
+        
+        return order;
+    }
+    
     private async Task SetNextOrderNumber(Order order, CancellationToken cancellationToken)
     {
         const long newNumber = 1;

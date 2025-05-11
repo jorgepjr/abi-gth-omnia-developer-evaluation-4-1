@@ -1,4 +1,5 @@
 using Ambev.DeveloperEvaluation.Application.Orders.CreateOrder;
+using Ambev.DeveloperEvaluation.Application.Orders.GetById;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Orders.CreateOrder;
 using AutoMapper;
@@ -45,5 +46,12 @@ public class OrdersController : BaseController
                 TotalPrice = response.Total,
             },
         }); 
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetById(Guid orderId, CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(new GetOrderbyIdCommand{OrderId = orderId}, cancellationToken); 
+        return Ok(response);
     }
 }
