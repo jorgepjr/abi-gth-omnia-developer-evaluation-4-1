@@ -1,6 +1,9 @@
 using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
+using Ambev.DeveloperEvaluation.Application.Products.GetById;
+using Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Products.CreateProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Products.UpdateProduct;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -33,5 +36,27 @@ public class ProductsController : BaseController
             Message = "Product created successfully",
             Data = _mapper.Map<CreateProductResponse>(response),
         }); 
+    }
+    
+    [HttpPut("/{id}")]
+    public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] UpdateProductRequest request, CancellationToken cancellationToken)
+    {
+        request.Id = id;
+        var command = _mapper.Map<UpdateProductCommand>(request);
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Created(string.Empty, new ApiResponseWithData<UpdateProductResponse>
+        {
+            Success = true,
+            Message = "Product updated successfully",
+            Data = _mapper.Map<UpdateProductResponse>(response),
+        }); 
+    }
+    
+    [HttpGet("/{id}")]
+    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(new GetProductByIdCommand{ProductId = id}, cancellationToken); 
+        return Ok(response);
     }
 }

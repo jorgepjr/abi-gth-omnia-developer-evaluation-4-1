@@ -20,8 +20,17 @@ public class ProductRepository : IProductRepository
         return product;
     }
 
-    public async Task<Product> GetById(Guid productId, CancellationToken cancellationToken = default)
+    public async Task<Product> UpdateAsync(Product product, CancellationToken cancellationToken = default)
     {
-        return await _context.Products.FirstOrDefaultAsync(x => x.Id == productId, cancellationToken);
+        _context.Products.Update(product);
+        await  _context.SaveChangesAsync(cancellationToken);
+        return product;
+    }
+
+    public async Task<Product> GetByIdAsync(Guid productId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Products
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == productId, cancellationToken);
     }
 }
