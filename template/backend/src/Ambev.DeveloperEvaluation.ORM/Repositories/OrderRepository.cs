@@ -29,11 +29,6 @@ public class OrderRepository : IOrderRepository
         return order;
     }
     
-    public async Task<IEnumerable<OrderItem>> CancelAsync(Guid orderId, CancellationToken cancellationToken)
-    {
-        return await _context.OrderItems.Where(o => o.OrderId == orderId).ToListAsync(cancellationToken);
-    }
-    
     public async Task<Order?> GetByIdAsync(Guid orderId, CancellationToken cancellationToken = default)
     {
         var order = await _context.Orders
@@ -42,6 +37,13 @@ public class OrderRepository : IOrderRepository
             .Include(x=>x.OrderItems)
             .FirstOrDefaultAsync(x=>x.Id == orderId, cancellationToken);
         
+        return order;
+    }
+    
+    public async Task<Order> DeleteAsync(Order order)
+    {
+        _context.Orders.Remove(order);
+        await _context.SaveChangesAsync();
         return order;
     }
     
