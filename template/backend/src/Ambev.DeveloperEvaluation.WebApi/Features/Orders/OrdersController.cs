@@ -1,6 +1,8 @@
 using Ambev.DeveloperEvaluation.Application.Orders.CancelOrder;
 using Ambev.DeveloperEvaluation.Application.Orders.CancelOrderItems;
 using Ambev.DeveloperEvaluation.Application.Orders.CreateOrder;
+using Ambev.DeveloperEvaluation.Application.Orders.DeleteOrder;
+using Ambev.DeveloperEvaluation.Application.Orders.GetAllOrders;
 using Ambev.DeveloperEvaluation.Application.Orders.GetById;
 using Ambev.DeveloperEvaluation.Application.Orders.UpdateOrder;
 using Ambev.DeveloperEvaluation.WebApi.Common;
@@ -52,7 +54,7 @@ public class OrdersController : BaseController
         }); 
     }
     
-    [HttpPut("/{orderId}")]
+    [HttpPut("{orderId}")]
     public async Task<IActionResult> UpdateOrder(Guid orderId, [FromBody] UpdateOrderRequest request, CancellationToken cancellationToken)
     {
         request.OrderId = orderId;
@@ -62,14 +64,14 @@ public class OrdersController : BaseController
        return Ok(response); 
     }
     
-    [HttpPut("/{orderId}/cancel")]
+    [HttpPut("{orderId}/cancel")]
     public async Task<IActionResult> Cancel(Guid orderId, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(new CancelOrderCommand{OrderId = orderId}, cancellationToken);
         return Ok(response); 
     }
     
-    [HttpPut("/{orderId}/cancel-items")]
+    [HttpPut("{orderId}/cancel-items")]
     public async Task<IActionResult> CancelOrderItems(Guid orderId, List<Guid?>? orderItemsIds, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(
@@ -77,10 +79,25 @@ public class OrdersController : BaseController
         return Ok(response); 
     }
     
-    [HttpGet]
+    [HttpGet("{orderId}")]
     public async Task<IActionResult> GetById(Guid orderId, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(new GetOrderbyIdCommand{OrderId = orderId}, cancellationToken); 
+        return Ok(response);
+    }
+    
+    [HttpDelete("{orderId}")]
+    public async Task<IActionResult> Delete(Guid orderId, CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(new DeleteOrderCommand(){OrderId = orderId}, cancellationToken); 
+        return Ok(response);
+    }
+    
+    [HttpGet("{pageNumber}/{pageSize}")]
+    public async Task<IActionResult> GetAllOrders(int pageSize, int pageNumber, CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+            new GetAllOrdersCommand{PageSize = pageSize, PageNumber = pageNumber}, cancellationToken); 
         return Ok(response);
     }
 }
