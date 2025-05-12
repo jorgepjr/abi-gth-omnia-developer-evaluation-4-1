@@ -39,7 +39,7 @@ public class ProductsController : BaseController
         }); 
     }
     
-    [HttpPut("/{id}")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] UpdateProductRequest request, CancellationToken cancellationToken)
     {
         request.Id = id;
@@ -54,14 +54,14 @@ public class ProductsController : BaseController
         }); 
     }
     
-    [HttpGet("/{id}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(new GetProductByIdCommand{ProductId = id}, cancellationToken); 
         return Ok(response);
     }
     
-    [HttpGet("/{pageNumber}/{pageSize}")]
+    [HttpGet("{pageNumber}/{pageSize}")]
     public async Task<IActionResult> GetAll(int pageSize, int pageNumber, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(

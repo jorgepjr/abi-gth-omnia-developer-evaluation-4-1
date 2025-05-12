@@ -1,3 +1,4 @@
+using Ambev.DeveloperEvaluation.Domain.Common;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -29,11 +30,6 @@ public class OrderRepository : IOrderRepository
         return order;
     }
     
-    public async Task<IEnumerable<OrderItem>> CancelAsync(Guid orderId, CancellationToken cancellationToken)
-    {
-        return await _context.OrderItems.Where(o => o.OrderId == orderId).ToListAsync(cancellationToken);
-    }
-    
     public async Task<Order?> GetByIdAsync(Guid orderId, CancellationToken cancellationToken = default)
     {
         var order = await _context.Orders
@@ -43,6 +39,34 @@ public class OrderRepository : IOrderRepository
             .FirstOrDefaultAsync(x=>x.Id == orderId, cancellationToken);
         
         return order;
+    }
+    
+    public async Task<Order> DeleteAsync(Order order)
+    {
+        _context.Orders.Remove(order);
+        await _context.SaveChangesAsync();
+        return order;
+    }
+    
+    public async Task<PaginatedList<Order>> GetAllAsync(int pageSize, int pageNumber, CancellationToken cancellationToken = default)
+    {
+        var query = _context.Orders
+            .AsNoTracking()
+            .Include(x=>x.OrderItems)
+            .OrderBy(x => x.Number);
+        
+        var orders = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+        
+        var count = await query.CountAsync(cancellationToken);
+        
+        return new PaginatedList<Order>(
+            orders,
+            count,
+            pageNumber,
+            pageSize);
     }
     
     private async Task SetNextOrderNumber(Order order, CancellationToken cancellationToken)

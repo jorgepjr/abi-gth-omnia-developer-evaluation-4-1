@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Ambev.DeveloperEvaluation.Domain.Common;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
@@ -19,8 +20,11 @@ public class OrderItem : BaseEntity
     
     public Guid OrderId { get; private set; }
     public Guid ProductId { get; private set; }
-    public Order Order { get; private set; } = null!;
+    
     public Product Product { get; private set; } = null!;
+    
+    [JsonIgnore]
+    public Order Order { get; private set; } = null!;
     
     [NotMapped]
     public decimal FinalPrice { get; private set; }
@@ -52,5 +56,10 @@ public class OrderItem : BaseEntity
        ProductId = productId;
        Quantity = quantity;
        ApplyTotalValue();
+    }
+
+    public void Cancel()
+    {
+        Cancelled = true;
     }
 }

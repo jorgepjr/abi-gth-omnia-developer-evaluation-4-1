@@ -30,4 +30,9 @@ public class Order : BaseEntity
         OrderItems.Add(orderItem);
         Total += orderItem.FinalPrice;
     }
+
+    public void Cancel()
+    {
+        Cancelled = true;
+    }
 }
