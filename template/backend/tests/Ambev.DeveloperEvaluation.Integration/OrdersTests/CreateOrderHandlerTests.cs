@@ -29,7 +29,11 @@ public class CreateOrderHandlerTests : IClassFixture<InMemoryDataBase>
     {
         //Arrange
         var productsPrices = new[] { 10.6m, 300m, 500m, 600m, 800m };
-        var products = await CreateAndGetProducts(productsPrices);
+        await CreateProducts(productsPrices);
+        
+        var products = await _context.Products
+            .Where(x=> productsPrices.Contains(x.Price))
+            .ToListAsync();
         
         var customer = await _customerRepository.CreateAsync(new Customer { Name = "Jorge" });
         var shop = await _shopRepository.CreateAsync(new Shop { TradeName = "Teste-shop" });
@@ -57,8 +61,12 @@ public class CreateOrderHandlerTests : IClassFixture<InMemoryDataBase>
     public async Task MustApplyTenPercentDiscountOnOrdersAboveFourIdenticalItems()
     {
         //Arrange
-        var unitPriceProduct = new[] {10.6m};
-        var products = await CreateAndGetProducts(unitPriceProduct);
+        var unitPriceProduct = new[] {10.0m};
+        await CreateProducts(unitPriceProduct);
+
+        var products = await _context.Products
+            .Where(x => unitPriceProduct.Contains(x.Price))
+            .ToListAsync();
         
         var customer = await _customerRepository.CreateAsync(new Customer { Name = "Jorge" });
         var shop = await _shopRepository.CreateAsync(new Shop { TradeName = "Teste-shop" });
@@ -74,7 +82,7 @@ public class CreateOrderHandlerTests : IClassFixture<InMemoryDataBase>
         }, CancellationToken.None);
         
         //Assert
-        Assert.Equal(47.70m, response.Total);
+        Assert.Equal(45.0m, response.Total);
     }
     
     [Fact(DisplayName = "Compras entre 10 e 20 itens idênticos têm 20% de desconto")]
@@ -82,8 +90,11 @@ public class CreateOrderHandlerTests : IClassFixture<InMemoryDataBase>
     {
         //Arrange
         var unitPriceProduct = new[] {15.0m, 20m};
-        var products = await CreateAndGetProducts(unitPriceProduct);
+        await CreateProducts(unitPriceProduct);
         
+        var products = await _context.Products
+            .Where(x => unitPriceProduct.Contains(x.Price))
+            .ToListAsync();
         var customer = await _customerRepository.CreateAsync(new Customer { Name = "Jorge" });
         var shop = await _shopRepository.CreateAsync(new Shop { TradeName = "Teste-shop" });
 
@@ -117,13 +128,11 @@ public class CreateOrderHandlerTests : IClassFixture<InMemoryDataBase>
         return orderItems;
     }
 
-    private async Task<List<Product>> CreateAndGetProducts(decimal[] prices)
+    private async Task CreateProducts(decimal[] prices)
     {
         for (int i = 0; i < prices.Length; i++)
         {
             await _productRepository.CreateAsync(new Product { Name = $"Item - {i}", Price = prices[i] });
         }
-
-        return await _context.Products.ToListAsync();
     }
 }

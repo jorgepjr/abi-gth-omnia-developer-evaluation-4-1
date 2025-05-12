@@ -1,6 +1,6 @@
-namespace Ambev.DeveloperEvaluation.Application.Orders.CreateOrder;
+namespace Ambev.DeveloperEvaluation.Application.Orders.UpdateOrder;
 
-public class CreateOrderItemResult
+public class UpdateOrderItemResult
 {
     public int Quantity { get; set; }
     public Guid ProductId { get; set; }

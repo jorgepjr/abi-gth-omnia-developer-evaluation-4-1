@@ -40,13 +40,11 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreateOrde
             var product = await _productRepository.GetByIdAsync(orderItem.ProductId, cancellationToken);
             if (product is null) throw new ArgumentNullException($"Product with ID '{orderItem.ProductId}' not found");
             
-            var newOrderItem = new OrderItem
-            {
-                OrderId = order.Id,
-                Quantity = orderItem.Quantity,
-                ProductId = product.Id,
-                UnitPrice = product.Price,
-            };
+            var newOrderItem = new OrderItem(
+                order.Id,
+                orderItem.Quantity,
+                product.Id,
+                product.Price);
             
             order.AddOrderItem(newOrderItem);
         }
