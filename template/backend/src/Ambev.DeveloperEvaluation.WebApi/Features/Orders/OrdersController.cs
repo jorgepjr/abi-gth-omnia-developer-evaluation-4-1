@@ -1,3 +1,5 @@
+using Ambev.DeveloperEvaluation.Application.Orders.CancelOrder;
+using Ambev.DeveloperEvaluation.Application.Orders.CancelOrderItems;
 using Ambev.DeveloperEvaluation.Application.Orders.CreateOrder;
 using Ambev.DeveloperEvaluation.Application.Orders.GetById;
 using Ambev.DeveloperEvaluation.Application.Orders.UpdateOrder;
@@ -58,6 +60,21 @@ public class OrdersController : BaseController
         var response = await _mediator.Send(command, cancellationToken);
 
        return Ok(response); 
+    }
+    
+    [HttpPut("/{orderId}/cancel")]
+    public async Task<IActionResult> Cancel(Guid orderId, CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(new CancelOrderCommand{OrderId = orderId}, cancellationToken);
+        return Ok(response); 
+    }
+    
+    [HttpPut("/{orderId}/cancel-items")]
+    public async Task<IActionResult> CancelOrderItems(Guid orderId, List<Guid?>? orderItemsIds, CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(
+            new CancelOrderItemsCommand{OrderId = orderId, OrderItemsIds = orderItemsIds}, cancellationToken);
+        return Ok(response); 
     }
     
     [HttpGet]

@@ -31,7 +31,7 @@ public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, UpdateOrde
             
             if (orderItemUpdate != null)
             {
-                var product = await _productRepository.GetById(orderItemUpdate.ProductId, cancellationToken);
+                var product = await _productRepository.GetByIdAsync(orderItemUpdate.ProductId, cancellationToken);
                 
                 if (product is null) throw new ArgumentNullException($"Product with ID '{orderItemUpdate.ProductId}' not found");
                 

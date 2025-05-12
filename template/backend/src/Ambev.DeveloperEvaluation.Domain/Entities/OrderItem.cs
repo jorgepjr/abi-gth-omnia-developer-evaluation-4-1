@@ -53,4 +53,9 @@ public class OrderItem : BaseEntity
        Quantity = quantity;
        ApplyTotalValue();
     }
+
+    public void Cancel()
+    {
+        Cancelled = true;
+    }
 }
