@@ -22,9 +22,23 @@ public class OrderRepository : IOrderRepository
         return order;
     }
     
+    public async Task<Order> UpdateAsync(Order order, CancellationToken cancellationToken = default)
+    {
+        _context.Orders.Update(order);
+        await _context.SaveChangesAsync(cancellationToken);
+        return order;
+    }
+    
+    public async Task<IEnumerable<OrderItem>> CancelAsync(Guid orderId, CancellationToken cancellationToken)
+    {
+        return await _context.OrderItems.Where(o => o.OrderId == orderId).ToListAsync(cancellationToken);
+    }
+    
     public async Task<Order?> GetByIdAsync(Guid orderId, CancellationToken cancellationToken = default)
     {
         var order = await _context.Orders
+            .Include(x=>x.Customer)
+            .Include(x=>x.Shop)
             .Include(x=>x.OrderItems)
             .FirstOrDefaultAsync(x=>x.Id == orderId, cancellationToken);
         

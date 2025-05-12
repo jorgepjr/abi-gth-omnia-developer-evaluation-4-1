@@ -1,7 +1,9 @@
 using Ambev.DeveloperEvaluation.Application.Orders.CreateOrder;
 using Ambev.DeveloperEvaluation.Application.Orders.GetById;
+using Ambev.DeveloperEvaluation.Application.Orders.UpdateOrder;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Orders.CreateOrder;
+using Ambev.DeveloperEvaluation.WebApi.Features.Orders.UpdateOrder;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -46,6 +48,16 @@ public class OrdersController : BaseController
                 TotalPrice = response.Total,
             },
         }); 
+    }
+    
+    [HttpPut("/{orderId}")]
+    public async Task<IActionResult> UpdateOrder(Guid orderId, [FromBody] UpdateOrderRequest request, CancellationToken cancellationToken)
+    {
+        request.OrderId = orderId;
+        var command = _mapper.Map<UpdateOrderCommand>(request);
+        var response = await _mediator.Send(command, cancellationToken);
+
+       return Ok(response); 
     }
     
     [HttpGet]

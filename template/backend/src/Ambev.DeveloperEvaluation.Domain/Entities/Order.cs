@@ -25,6 +25,8 @@ public class Order : BaseEntity
         if (orderItem.Quantity > 20)
             throw new DomainException("can't add more than 20 units of the same item.");
         
+        orderItem.ApplyTotalValue();
+        
         OrderItems.Add(orderItem);
         Total += orderItem.FinalPrice;
     }
