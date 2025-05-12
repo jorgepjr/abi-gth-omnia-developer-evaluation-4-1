@@ -19,6 +19,9 @@ public class Order : BaseEntity
     public Guid ShopId { get; set; }
     public Customer Customer { get; set; } = null!;
     public Shop Shop { get; set; } = null!;
+    
+    public DateTime? UpdatedAt { get; set; }
+    public DateTime? CanceledAt { get; set; }
 
     public void AddOrderItem(OrderItem orderItem)
     {
@@ -33,6 +36,7 @@ public class Order : BaseEntity
 
     public void Cancel()
     {
+        CanceledAt = DateTime.Now;
         Cancelled = true;
     }
 }

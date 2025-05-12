@@ -15,6 +15,16 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         builder.Property(x => x.Quantity)
             .IsRequired();
         
+        builder.Property(x => x.CreatedAt)
+            .IsRequired()
+            .HasColumnType("timestamp without time zone");
+        
+        builder.Property(x => x.UpdatedAt)
+            .HasColumnType("timestamp without time zone");
+        
+        builder.Property(x => x.CanceledAt)
+            .HasColumnType("timestamp without time zone");
+        
         builder.Property(x => x.UnitPrice).IsRequired();
         builder.Property(x => x.Cancelled).IsRequired();
     }

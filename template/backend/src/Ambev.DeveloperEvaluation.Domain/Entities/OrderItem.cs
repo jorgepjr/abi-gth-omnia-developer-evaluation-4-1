@@ -22,6 +22,10 @@ public class OrderItem : BaseEntity
     public Guid ProductId { get; private set; }
     
     public Product Product { get; private set; } = null!;
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
+    public DateTime? CanceledAt { get; set; }
     
     [JsonIgnore]
     public Order Order { get; private set; } = null!;
@@ -53,13 +57,15 @@ public class OrderItem : BaseEntity
 
     public void UpdateItem(Guid productId, int quantity)
     {
-       ProductId = productId;
-       Quantity = quantity;
-       ApplyTotalValue();
+        ProductId = productId;
+        Quantity = quantity;
+        ApplyTotalValue();
+        UpdatedAt = DateTime.UtcNow;
     }
 
     public void Cancel()
     {
         Cancelled = true;
+        CanceledAt = DateTime.UtcNow;
     }
 }

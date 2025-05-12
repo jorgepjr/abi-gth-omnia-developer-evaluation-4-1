@@ -21,6 +21,12 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .IsRequired()
             .HasColumnType("timestamp without time zone");
         
+        builder.Property(x => x.UpdatedAt)
+            .HasColumnType("timestamp without time zone");
+        
+        builder.Property(x => x.CanceledAt)
+            .HasColumnType("timestamp without time zone");
+        
         builder.Property(x => x.Cancelled).IsRequired();
     }
 }
