@@ -35,7 +35,7 @@ public class OrderItem : BaseEntity
     [NotMapped]
     public decimal ItemWithDiscount { get; set; }
 
-    public void ApplyTotalValue()
+    public decimal ApplyTotalValue()
     {
         decimal discount = 0.0m;
         
@@ -53,6 +53,8 @@ public class OrderItem : BaseEntity
         
         var totalPriceWithDiscount = ItemWithDiscount * Quantity;
         FinalPrice = totalPriceWithDiscount;
+
+        return ItemWithDiscount;
     }
 
     public void UpdateItem(Guid productId, int quantity)

@@ -31,7 +31,7 @@ public class GetOrderByIdOrderHandler : IRequestHandler<GetOrderbyIdCommand, Get
                 ProductId = x.ProductId,
                 Quantity = x.Quantity,
                 UnitPrice = x.UnitPrice,
-                Discount = x.ItemWithDiscount,
+                Discount = x.ApplyTotalValue(),
                 FinalPrice = x.FinalPrice,
                 Cancelled = x.Cancelled,
             }),
