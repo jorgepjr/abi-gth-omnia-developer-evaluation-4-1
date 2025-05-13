@@ -21,14 +21,14 @@ public class OrderItem : BaseEntity
     public Guid OrderId { get; private set; }
     public Guid ProductId { get; private set; }
     
-    public Product Product { get; private set; } = null!;
+    public Product? Product { get; private set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
     public DateTime? CanceledAt { get; set; }
     
     [JsonIgnore]
-    public Order Order { get; private set; } = null!;
+    public Order? Order { get; private set; }
     
     [NotMapped]
     public decimal FinalPrice { get; private set; }
@@ -52,7 +52,7 @@ public class OrderItem : BaseEntity
         ItemWithDiscount = UnitPrice -  discount;
         
         var totalPriceWithDiscount = ItemWithDiscount * Quantity;
-        FinalPrice += totalPriceWithDiscount;
+        FinalPrice = totalPriceWithDiscount;
     }
 
     public void UpdateItem(Guid productId, int quantity)
