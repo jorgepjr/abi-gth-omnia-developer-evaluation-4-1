@@ -44,7 +44,7 @@ The migration files are already created and are located at the path:
 
 3 - Press F5 or click Run.
 
-4 - The API will start and attempt to connect to the PostgreSQL database previously started via Docker.
+4 - The API will start (using HTTP or HTTPS) and attempt to connect to the PostgreSQL database previously started via Docker.
 
 5- After the application connects to the database, the tables will be automatically generated.
 
