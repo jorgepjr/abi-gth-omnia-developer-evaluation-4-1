@@ -1,9 +1,10 @@
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Ambev.DeveloperEvaluation.Application.Orders.DeleteOrder;
 
-public class DeleteOrderHandler(IOrderRepository orderRepository)
+public class DeleteOrderHandler(IOrderRepository orderRepository, ILogger<DeleteOrderHandler> logger)
     : IRequestHandler<DeleteOrderCommand, DeleteOrderReult>
 {
     public async Task<DeleteOrderReult> Handle(DeleteOrderCommand command, CancellationToken cancellationToken)
@@ -24,6 +25,7 @@ public class DeleteOrderHandler(IOrderRepository orderRepository)
             Deleted = true
         };
         
+        logger.LogInformation($"Order with number '{orderCancelled.Number}' has been deleted");
         return result;
     }
 }

@@ -1,7 +1,6 @@
-using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
-using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using ValidationException = FluentValidation.ValidationException;
 
 namespace Ambev.DeveloperEvaluation.Application.Orders.UpdateOrder;
@@ -10,12 +9,16 @@ public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, UpdateOrde
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
+    private readonly ILogger<UpdateOrderHandler> _logger;
+
     public UpdateOrderHandler(
         IOrderRepository orderRepository,
-        IProductRepository productRepository)
+        IProductRepository productRepository,
+        ILogger<UpdateOrderHandler> logger)
     {
         _orderRepository = orderRepository;
         _productRepository = productRepository;
+        _logger = logger;
     }
 
     public async Task<UpdateOrderResult> Handle(UpdateOrderCommand command, CancellationToken cancellationToken)
@@ -54,6 +57,8 @@ public class UpdateOrderHandler : IRequestHandler<UpdateOrderCommand, UpdateOrde
             }),
             Total = orderDb.Total,
         };
+        
+        _logger.LogInformation($"Order with Id '{updatedOrder.Id}' has been updated");
         
         return result;
     }
