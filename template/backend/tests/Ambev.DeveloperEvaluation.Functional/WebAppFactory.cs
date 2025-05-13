@@ -10,5 +10,4 @@ public class WebAppFactory : WebApplicationFactory<Program>
     {
         builder.UseEnvironment("Development");
     }
-    
 }

@@ -3,6 +3,8 @@ using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.ORM;
 using Ambev.DeveloperEvaluation.ORM.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Integration.OrdersTests;
@@ -14,6 +16,7 @@ public class CreateOrderHandlerTests : IClassFixture<InMemoryDataBase>
     private readonly OrderRepository _orderRepository;
     private readonly ProductRepository _productRepository;
     private readonly ShopRepository _shopRepository;
+    private readonly ILogger<CreateOrderHandler> _logger;
 
     public CreateOrderHandlerTests(InMemoryDataBase fixture)
     {
@@ -22,6 +25,7 @@ public class CreateOrderHandlerTests : IClassFixture<InMemoryDataBase>
         _orderRepository = new OrderRepository(_context);
         _productRepository = new ProductRepository(_context);
         _shopRepository = new ShopRepository(_context);
+        _logger = Substitute.For<ILogger<CreateOrderHandler>>();
     }
 
     [Fact(DisplayName = "register orders and add 4 order item")]
@@ -45,7 +49,7 @@ public class CreateOrderHandlerTests : IClassFixture<InMemoryDataBase>
             OrderItems = CreateAndGetOrderItemsCommand(products, [1, 2, 3, 4]),
         };
         
-        var handler = new CreateOrderHandler(_orderRepository, _productRepository);
+        var handler = new CreateOrderHandler(_orderRepository, _productRepository, _logger);
 
         //Action
         var response = await handler.Handle(command, CancellationToken.None);
@@ -61,6 +65,8 @@ public class CreateOrderHandlerTests : IClassFixture<InMemoryDataBase>
     public async Task MustApplyTenPercentDiscountOnOrdersAboveFourIdenticalItems()
     {
         //Arrange
+        var expectedResult = 45.0m;
+        
         var unitPriceProduct = new[] {10.0m};
         await CreateProducts(unitPriceProduct);
 
@@ -71,7 +77,7 @@ public class CreateOrderHandlerTests : IClassFixture<InMemoryDataBase>
         var customer = await _customerRepository.CreateAsync(new Customer { Name = "Jorge" });
         var shop = await _shopRepository.CreateAsync(new Shop { TradeName = "Teste-shop" });
 
-        var handler = new CreateOrderHandler(_orderRepository, _productRepository);
+        var handler = new CreateOrderHandler(_orderRepository, _productRepository, _logger);
         
         //Action
         var response = await handler.Handle(new CreateOrderCommand
@@ -82,13 +88,15 @@ public class CreateOrderHandlerTests : IClassFixture<InMemoryDataBase>
         }, CancellationToken.None);
         
         //Assert
-        Assert.Equal(45.0m, response.Total);
+        Assert.Equal(expectedResult, response.Total);
     }
     
     [Fact(DisplayName = "Compras entre 10 e 20 itens idênticos têm 20% de desconto")]
     public async Task MustApplyTwentyPercentDiscountWhenOrderContainsBetweenTenAndTwentyIdenticalItems()
     {
         //Arrange
+        var expectedResult = 408m;
+            
         var unitPriceProduct = new[] {15.0m, 20m};
         await CreateProducts(unitPriceProduct);
         
@@ -106,13 +114,13 @@ public class CreateOrderHandlerTests : IClassFixture<InMemoryDataBase>
             OrderItems = orderItems,
         };
         
-        var handler = new CreateOrderHandler(_orderRepository, _productRepository);
+        var handler = new CreateOrderHandler(_orderRepository, _productRepository, _logger);
             
         //Action
         var response = await handler.Handle(command, CancellationToken.None);
         
         //Assert
-        Assert.Equal(408m, response.Total);
+        Assert.Equal(expectedResult, response.Total);
     }
 
     private static List<CreateOrderItemCommand> CreateAndGetOrderItemsCommand(List<Product> products, int[] quantities)
