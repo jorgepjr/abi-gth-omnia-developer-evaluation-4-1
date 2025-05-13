@@ -1,23 +1,22 @@
+using System.Net;
 using System.Net.Http.Json;
 using Ambev.DeveloperEvaluation.WebApi.Features.Orders.CreateOrder;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Functional;
 
-public class OrderFunctionalTests : IClassFixture<WebAppFactory>
+public class OrderFunctionalTests(WebAppFactory factory) : IClassFixture<WebAppFactory>
 {
-    private readonly HttpClient _client;
+    private const string Uri = "api/orders";
+    
+    private readonly HttpClient _client = factory.CreateClient();
 
-    public OrderFunctionalTests(WebAppFactory factory)
-    {
-        _client = factory.CreateClient();
-    }
-
-    [Fact]
-    public async Task MustCreateOrder()
+    [Fact(DisplayName = ("Retorna BadRequest no envio de dados vazios de pedidos"))]
+    public async Task ShouldReturnBadRequestWhenOrderDataIsEmpty()
     {
         var response = await _client.PostAsJsonAsync("/api/orders", new CreateOrderRequest{});
+
+        var res = response.StatusCode;
+        Assert.Equal(HttpStatusCode.BadRequest,response.StatusCode);
     }
 }
