@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Ambev.DeveloperEvaluation.WebApi.Migrations
 {
     /// <inheritdoc />
-    public partial class StartMigration : Migration
+    public partial class AppMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -73,11 +73,13 @@ namespace Ambev.DeveloperEvaluation.WebApi.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Number = table.Column<long>(type: "bigint", nullable: false),
-                    CreateAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Total = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     Cancelled = table.Column<bool>(type: "boolean", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ShopId = table.Column<Guid>(type: "uuid", nullable: false)
+                    ShopId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CanceledAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -105,7 +107,10 @@ namespace Ambev.DeveloperEvaluation.WebApi.Migrations
                     UnitPrice = table.Column<decimal>(type: "numeric", nullable: false),
                     Cancelled = table.Column<bool>(type: "boolean", nullable: false),
                     OrderId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProductId = table.Column<Guid>(type: "uuid", nullable: false)
+                    ProductId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CanceledAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {

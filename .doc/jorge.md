@@ -64,3 +64,14 @@ You can test the endpoints via Swagger:
 
 http://localhost:5119/swagger/index.html
 
+## Technologies Used
+
+- .NET 8
+- Microsoft.EntityFrameworkCore
+- Microsoft.EntityFrameworkCore.InMemory
+- PostgreSQL (via Docker)
+- Docker
+- xUnit (tunit and integration testing)
+- Microsoft.NET.Test.Sdk (test infrastructure)
+- Serilog (structured logging)
+
