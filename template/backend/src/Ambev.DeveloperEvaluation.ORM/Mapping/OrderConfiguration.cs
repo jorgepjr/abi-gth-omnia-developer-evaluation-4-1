@@ -16,16 +16,13 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .IsRequired()
             .HasColumnType("MONEY")
             .HasColumnType("decimal(18, 2)");
-        
+
         builder.Property(x => x.CreateAt)
-            .IsRequired()
-            .HasColumnType("timestamp without time zone");
-        
-        builder.Property(x => x.UpdatedAt)
-            .HasColumnType("timestamp without time zone");
-        
-        builder.Property(x => x.CanceledAt)
-            .HasColumnType("timestamp without time zone");
+            .IsRequired();
+
+        builder.Property(x => x.UpdatedAt);
+
+        builder.Property(x => x.CanceledAt);
         
         builder.Property(x => x.Cancelled).IsRequired();
     }

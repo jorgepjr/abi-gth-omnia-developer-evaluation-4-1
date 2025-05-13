@@ -10,7 +10,7 @@ public class Order : BaseEntity
     }
 
     public long Number { get; set; }
-    public DateTime CreateAt { get;  set; } = DateTime.Now;
+    public DateTime CreateAt { get;  set; } = DateTime.UtcNow;
     public decimal Total{ get; set; }
     public bool Cancelled { get; set; } = false;
     public List<OrderItem> OrderItems { get; set; } = [];
@@ -36,7 +36,7 @@ public class Order : BaseEntity
 
     public void Cancel()
     {
-        CanceledAt = DateTime.Now;
+        CanceledAt = DateTime.UtcNow;
         Cancelled = true;
     }
 }
