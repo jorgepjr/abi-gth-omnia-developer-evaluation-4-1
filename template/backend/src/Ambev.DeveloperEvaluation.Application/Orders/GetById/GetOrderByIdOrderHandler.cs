@@ -18,6 +18,9 @@ public class GetOrderByIdOrderHandler : IRequestHandler<GetOrderbyIdCommand, Get
     {
         var order = await _orderRepository.GetByIdAsync(command.OrderId, cancellationToken);
         
+        if(order is null)
+            throw new InvalidOperationException($"Order with Id '{command.OrderId}' does not exist.");
+        
         var result = new GetOrderByReult
         {
             OrderId = order!.Id,

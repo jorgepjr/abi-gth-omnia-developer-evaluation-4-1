@@ -1,3 +1,4 @@
+using Ambev.DeveloperEvaluation.Application.Validator;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using MediatR;
@@ -23,10 +24,11 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreateOrde
 
     public async Task<CreateOrderResult> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
     {
-        var validateOrder = command.ValidateOrder();
+        var validator = new OrderValidator();
+        var validationResult = validator.Validate(command);
         
-        if (!validateOrder.IsValid)
-            throw new ValidationException(validateOrder.Errors);
+        if (!validationResult.IsValid)
+            throw new ValidationException(validationResult.Errors);
         
         var order = new Order
         {
