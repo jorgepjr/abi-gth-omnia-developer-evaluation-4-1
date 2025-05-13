@@ -25,6 +25,8 @@ public class OrderRepository : IOrderRepository
     
     public async Task<Order> UpdateAsync(Order order, CancellationToken cancellationToken = default)
     {
+        order.UpdatedAt = DateTime.UtcNow;
+        
         _context.Orders.Update(order);
         await _context.SaveChangesAsync(cancellationToken);
         return order;

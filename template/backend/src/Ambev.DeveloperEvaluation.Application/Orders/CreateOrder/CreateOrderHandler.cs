@@ -1,7 +1,8 @@
+using Ambev.DeveloperEvaluation.Application.Validator;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
-using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using ValidationException = FluentValidation.ValidationException;
 
 namespace Ambev.DeveloperEvaluation.Application.Orders.CreateOrder;
@@ -10,20 +11,24 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreateOrde
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
+    private readonly ILogger<CreateOrderHandler> _logger;
     public CreateOrderHandler(
         IOrderRepository orderRepository,
-        IProductRepository productRepository)
+        IProductRepository productRepository,
+        ILogger<CreateOrderHandler> logger)
     {
         _orderRepository = orderRepository;
         _productRepository = productRepository;
+        _logger = logger;
     }
 
     public async Task<CreateOrderResult> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
     {
-        var validateOrder = command.ValidateOrder();
+        var validator = new OrderValidator();
+        var validationResult = validator.Validate(command);
         
-        if (!validateOrder.IsValid)
-            throw new ValidationException(validateOrder.Errors);
+        if (!validationResult.IsValid)
+            throw new ValidationException(validationResult.Errors);
         
         var order = new Order
         {
@@ -65,6 +70,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, CreateOrde
             Total = order.Total,
         };
         
+        _logger.LogInformation($"Order with number '{createOrder.Number}' has been created");
         return result;
     }
 }

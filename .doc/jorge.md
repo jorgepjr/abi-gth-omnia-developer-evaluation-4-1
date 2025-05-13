@@ -44,7 +44,7 @@ The migration files are already created and are located at the path:
 
 3 - Press F5 or click Run.
 
-4 - The API will start and attempt to connect to the PostgreSQL database previously started via Docker.
+4 - The API will start (using HTTP or HTTPS) and attempt to connect to the PostgreSQL database previously started via Docker.
 
 5- After the application connects to the database, the tables will be automatically generated.
 
@@ -63,4 +63,15 @@ After these registrations, use the order endpoints to create and manage orders
 You can test the endpoints via Swagger:
 
 http://localhost:5119/swagger/index.html
+
+## Technologies Used
+
+- .NET 8
+- Microsoft.EntityFrameworkCore
+- Microsoft.EntityFrameworkCore.InMemory
+- PostgreSQL (via Docker)
+- Docker
+- xUnit (tunit and integration testing)
+- Microsoft.NET.Test.Sdk (test infrastructure)
+- Serilog (structured logging)
 

@@ -1,9 +1,10 @@
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Ambev.DeveloperEvaluation.Application.Orders.CancelOrder;
 
-public class CancelOrderHandler(IOrderRepository orderRepository)
+public class CancelOrderHandler(IOrderRepository orderRepository, ILogger<CancelOrderHandler> logger)
     : IRequestHandler<CancelOrderCommand, CancelOrderReult>
 {
     public async Task<CancelOrderReult> Handle(CancelOrderCommand command, CancellationToken cancellationToken)
@@ -23,6 +24,8 @@ public class CancelOrderHandler(IOrderRepository orderRepository)
         {
             Cancelled = orderCancelled.Cancelled
         };
+        
+        logger.LogInformation($"Order cancelled with id: {order.Id}");
         
         return result;
     }

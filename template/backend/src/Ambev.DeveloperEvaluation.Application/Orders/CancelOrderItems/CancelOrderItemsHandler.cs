@@ -1,14 +1,18 @@
+using Ambev.DeveloperEvaluation.Application.Orders.CancelOrder;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Ambev.DeveloperEvaluation.Application.Orders.CancelOrderItems;
 
 public class CancelOrderItemsHandler : IRequestHandler<CancelOrderItemsCommand, List<CancelOrderItemsReult>>
 {
     private readonly IOrderItemRepository _orderItemRepository;
-    public CancelOrderItemsHandler(IOrderRepository orderRepository, IOrderItemRepository orderItemRepository)
+    private readonly ILogger<CancelOrderHandler> _logger;
+    public CancelOrderItemsHandler(IOrderItemRepository orderItemRepository, ILogger<CancelOrderHandler> logger)
     {
         _orderItemRepository = orderItemRepository;
+        _logger = logger;
     }
 
     public async Task<List<CancelOrderItemsReult>> Handle(CancelOrderItemsCommand command, CancellationToken cancellationToken)
@@ -39,7 +43,9 @@ public class CancelOrderItemsHandler : IRequestHandler<CancelOrderItemsCommand, 
             OrderItemId = x.Id,
             Cancelled = x.Cancelled
         }).ToList();
-
+        
+       _logger.LogInformation($"order items: {orderItemsCancelled.Count} cancelled");
+       
         return result;
     }
 }

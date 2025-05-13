@@ -44,11 +44,14 @@ namespace Ambev.DeveloperEvaluation.WebApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("CanceledAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<bool>("Cancelled")
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
@@ -61,6 +64,9 @@ namespace Ambev.DeveloperEvaluation.WebApi.Migrations
 
                     b.Property<decimal>("Total")
                         .HasColumnType("decimal(18, 2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -77,8 +83,14 @@ namespace Ambev.DeveloperEvaluation.WebApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("CanceledAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<bool>("Cancelled")
                         .HasColumnType("boolean");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
@@ -91,6 +103,9 @@ namespace Ambev.DeveloperEvaluation.WebApi.Migrations
 
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("numeric");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 

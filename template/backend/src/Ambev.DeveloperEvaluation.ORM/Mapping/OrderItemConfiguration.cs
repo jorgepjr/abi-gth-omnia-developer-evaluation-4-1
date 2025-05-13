@@ -14,6 +14,13 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         
         builder.Property(x => x.Quantity)
             .IsRequired();
+
+        builder.Property(x => x.CreatedAt)
+            .IsRequired();
+
+        builder.Property(x => x.UpdatedAt);
+
+        builder.Property(x => x.CanceledAt);
         
         builder.Property(x => x.UnitPrice).IsRequired();
         builder.Property(x => x.Cancelled).IsRequired();

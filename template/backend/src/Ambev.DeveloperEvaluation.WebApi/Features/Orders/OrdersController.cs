@@ -34,40 +34,67 @@ public class OrdersController : BaseController
     [HttpPost]
     public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest request, CancellationToken cancellationToken)
     {
-        var command = _mapper.Map<CreateOrderCommand>(request);
-        var response = await _mediator.Send(command, cancellationToken);
-
-        return Created(string.Empty, new ApiResponseWithData<CreateOrderResponse>
+        try
         {
-            Success = true,
-            Message = "Order created successfully",
-            Data = new CreateOrderResponse
+            var command = _mapper.Map<CreateOrderCommand>(request);
+            var response = await _mediator.Send(command, cancellationToken);
+
+            return Created(string.Empty, new ApiResponseWithData<CreateOrderResponse>
             {
-                OrderId = response.OrderId,
-                ShopId = response.ShopId,
-                CustomerId = response.CustomerId,
-                OrderItems = response.OrderItems.Select(x=> new OrderItemsResponse
+                Success = true,
+                Message = "Order created successfully",
+                Data = new CreateOrderResponse
                 {
-                    UnitPrice = x.UnitPrice,
-                    ProductId = x.ProductId,
-                    Quantity = x.Quantity,
-                }),
-                TotalPrice = response.Total,
-            },
-        }); 
+                    OrderId = response.OrderId,
+                    ShopId = response.ShopId,
+                    CustomerId = response.CustomerId,
+                    OrderItems = response.OrderItems.Select(x=> new OrderItemsResponse
+                    {
+                        UnitPrice = x.UnitPrice,
+                        ProductId = x.ProductId,
+                        Quantity = x.Quantity,
+                    }),
+                    TotalPrice = response.Total,
+                },
+            }); 
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new ApiResponseWithData<CreateOrderResponse>
+            {
+                Success = false,
+                Message = e.Message,
+            });
+        }
+       
     }
     
-    /// <summary>Update order</summary>
     [ProducesResponseType(typeof(UpdateOrderResult), StatusCodes.Status200OK)]
-    [EndpointSummary("Update order")]
+    [EndpointSummary("Update order items")]
     [HttpPut("{orderId}")]
     public async Task<IActionResult> UpdateOrder(Guid orderId, [FromBody] UpdateOrderRequest request, CancellationToken cancellationToken)
     {
-        request.OrderId = orderId;
-        var command = _mapper.Map<UpdateOrderCommand>(request);
-        var response = await _mediator.Send(command, cancellationToken);
-
-       return Ok(response); 
+        try
+        {
+            request.OrderId = orderId;
+            var command = _mapper.Map<UpdateOrderCommand>(request);
+            var response = await _mediator.Send(command, cancellationToken);
+            return Ok(new ApiResponseWithData<UpdateOrderResult>
+            {
+                Success = true,
+                Message = "Order updated successfully",
+                Data = response
+            }); 
+            
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new ApiResponseWithData<UpdateOrderResponse>
+            {
+                Success = false,
+                Message = e.Message,
+            });
+        }
     }
     
     /// <summary>Cancel order  by order id </summary>
@@ -76,8 +103,24 @@ public class OrdersController : BaseController
     [HttpPut("{orderId}/cancel")]
     public async Task<IActionResult> Cancel(Guid orderId, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new CancelOrderCommand{OrderId = orderId}, cancellationToken);
-        return Ok(response); 
+        try
+        {
+            var response = await _mediator.Send(new CancelOrderCommand{OrderId = orderId}, cancellationToken);
+            return Ok(new ApiResponseWithData<CancelOrderReult>
+            {
+                Success = true,
+                Message = "Order cancelled successfully",
+                Data = response
+            }); 
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new ApiResponseWithData<CancelOrderReult>
+            {
+                Success = false,
+                Message = e.Message,
+            });
+        }
     }
     
     /// <summary>Cancel order items by order id and orderItems</summary>
@@ -86,9 +129,25 @@ public class OrdersController : BaseController
     [HttpPut("{orderId}/cancel-items")]
     public async Task<IActionResult> CancelOrderItems(Guid orderId, List<Guid?>? orderItemsIds, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(
-            new CancelOrderItemsCommand{OrderId = orderId, OrderItemsIds = orderItemsIds}, cancellationToken);
-        return Ok(response); 
+        try
+        {
+            var response = await _mediator.Send(
+                new CancelOrderItemsCommand{OrderId = orderId, OrderItemsIds = orderItemsIds}, cancellationToken);
+            return Ok(new ApiResponseWithData<List<CancelOrderItemsReult>>
+            {
+                Success = true,
+                Message = response.Count > 0 ? "Order cancelled successfully" : "no items found to cancel",
+                Data = response,
+            }); 
+        }
+        catch (Exception  ex)
+        {
+            return BadRequest(new ApiResponseWithData<List<CancelOrderItemsReult>>
+            {
+                Success = false,
+                Message = ex.Message,
+            });
+        }
     }
 
     /// <summary>
@@ -101,19 +160,51 @@ public class OrdersController : BaseController
     [HttpGet("{orderId}")]
     public async Task<IActionResult> GetById(Guid orderId, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new GetOrderbyIdCommand{OrderId = orderId}, cancellationToken); 
-        return Ok(response);
+        try
+        {
+            var response = await _mediator.Send(new GetOrderbyIdCommand{OrderId = orderId}, cancellationToken); 
+            return Ok(new ApiResponseWithData<GetOrderByReult>
+            {
+                Success = true,
+                Data = response,
+            });
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new ApiResponseWithData<GetOrderByReult>
+            {
+                Success = false,
+                Message = e.Message,
+            });
+        }
     }
-    
+
     /// <summary>Remove order by orderId</summary>
     /// <param name="orderId">orderId</param>
+    /// <param name="cancellationToken"></param>
     [ProducesResponseType(typeof(DeleteOrderReult), StatusCodes.Status200OK)]
     [EndpointSummary("Delete order by id")]
     [HttpDelete("{orderId}")]
     public async Task<IActionResult> Delete(Guid orderId, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(new DeleteOrderCommand(){OrderId = orderId}, cancellationToken); 
-        return Ok(response);
+        try
+        {
+            var response = await _mediator.Send(new DeleteOrderCommand(){OrderId = orderId}, cancellationToken); 
+            return Ok(new ApiResponseWithData<DeleteOrderReult>
+            {
+                Success = true,
+                Message = "Order deleted successfully",
+                Data = response,
+            });
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new ApiResponseWithData<DeleteOrderReult>
+            {
+                Success = false,
+                Message = e.Message,
+            });
+        }
     }
     
     /// <summary>
@@ -127,8 +218,23 @@ public class OrdersController : BaseController
     [EndpointSummary("Get all orders with pagination")]
     public async Task<IActionResult> GetAllOrders(int pageSize, int pageNumber, CancellationToken cancellationToken)
     {
-        var response = await _mediator.Send(
-            new GetAllOrdersCommand{PageSize = pageSize, PageNumber = pageNumber}, cancellationToken); 
-        return Ok(response);
+        try
+        {
+            var response = await _mediator.Send(
+                new GetAllOrdersCommand{PageSize = pageSize, PageNumber = pageNumber}, cancellationToken); 
+            return Ok(new ApiResponseWithData<GetAllOrdersReult>
+            {
+                Success = true,
+                Data = response,
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new ApiResponseWithData<GetAllOrdersReult>
+            {
+                Success = false,
+                Message = ex.Message,
+            });
+        }
     }
 }
